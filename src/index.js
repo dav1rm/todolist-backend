@@ -33,4 +33,4 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Rotas da aplicação
 app.use(require("./routes.js"));
 
-server.listen(3000);
+server.listen(process.env.PORT || 3000);
