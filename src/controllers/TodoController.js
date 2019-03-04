@@ -2,7 +2,7 @@ const Todo = require("../models/Todo");
 
 class TodoController {
   async index(req, res) {
-    const todos = await Todo.find({});
+    const todos = await Todo.find({}).sort("-createdAt");
 
     return res.json(todos);
   }
@@ -16,7 +16,7 @@ class TodoController {
   async store(req, res) {
     const todo = await Todo.create({ ...req.body, author: req.userId });
 
-    req.io.emit("todo", todo);
+    req.io.emit("todoAdd", todo);
 
     return res.json(todo);
   }
@@ -26,15 +26,15 @@ class TodoController {
       new: true
     });
 
-    req.io.emit("todo", todo);
+    req.io.emit("todoUpdate", todo);
 
     return res.json(todo);
   }
 
   async destroy(req, res) {
-    await Todo.findByIdAndRemove(req.params.id);
+    const todo = await Todo.findByIdAndRemove(req.params.id);
 
-    req.io.emit("todo", {});
+    req.io.emit("todoDelete", todo);
 
     return res.send();
   }
